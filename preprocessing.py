@@ -13,7 +13,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 def gimme():
 	stuff_n_things = np.loadtxt(os.path.join(ROOT, 'all.txt'), delimiter='\t', dtype=str)
-	
+
 	# Separate Data and Labels
 	data = stuff_n_things[:,0].astype(str)
 	labels = stuff_n_things[:,1].astype(int)
@@ -33,7 +33,9 @@ def gimme():
 	to_sentence(data)
 
 	data = tfidf_vectorizer.fit_transform(data)
-	
+
+	data = data.todense()
+
 	return data, labels
 
 
@@ -41,7 +43,7 @@ def string_fix(arr):
 	"""Converts Sentences to Lowercase and Removes Non-Letter Characters"""
 	# Converting to Lowercase
 	arr = np.char.lower(arr)
-	
+
 	for i in range(arr.size):
 		# Replacing Non-Letter Characters with Spaces
 		arr[i] = re.sub('[^a-z]', " ", arr[i])
@@ -66,7 +68,7 @@ def process(arr):
 		arr[i] = np.array(sentence)
 
 		# Noting Empty Arrays for Later Removal
-		if arr[i].size == 0: 
+		if arr[i].size == 0:
 			empty_indices.append(i)
 
 	return arr, empty_indices
