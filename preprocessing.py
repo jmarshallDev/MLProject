@@ -5,6 +5,7 @@ from nltk.corpus import wordnet
 from nltk import word_tokenize, WordNetLemmatizer, pos_tag
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
+import math
 import os
 import re
 import pdb
@@ -17,7 +18,6 @@ def gimme():
 	# Separate Data and Labels
 	data = stuff_n_things[:,0].astype(str)
 	labels = stuff_n_things[:,1].astype(int)
-
 	# Apply String Manipulations
 	data = string_fix(data)
 
@@ -26,7 +26,7 @@ def gimme():
 
 	# Remove Empty Arrays
 	data = np.delete(data, empty_indices)
-
+	labels = np.delete(labels, empty_indices)
 	# Calculate TF-IDF Score
 	tfidf_vectorizer = TfidfVectorizer(lowercase=False)
 
@@ -34,9 +34,24 @@ def gimme():
 
 	data = tfidf_vectorizer.fit_transform(data)
 
-	data = data.todense()
+	data = np.asarray(data.todense())
 
-	return data, labels
+	np.random.seed(12)
+	np.random.shuffle(data)
+	np.random.shuffle(labels)
+
+	num_training_samples = math.ceil(data.shape[0]*0.8) + 1
+	training_data = data[0:num_training_samples,:]
+	training_labels = labels[0:num_training_samples]
+
+	num_valtest_samples = math.floor(data.shape[0]*0.1)
+	validation_data = data[num_training_samples:num_training_samples + num_valtest_samples, :]
+	validation_labels = labels[num_training_samples:num_training_samples + num_valtest_samples]
+
+	testing_data = data[num_training_samples+num_valtest_samples:data.shape[0], :]
+	testing_labels = labels[num_training_samples+num_valtest_samples:data.shape[0]]
+
+	return training_data, validation_data, testing_data, training_labels, validation_labels, testing_labels
 
 
 def string_fix(arr):
