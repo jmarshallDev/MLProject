@@ -38,6 +38,7 @@ def gimme():
 
 	np.random.seed(12)
 	np.random.shuffle(data)
+	np.random.seed(12)
 	np.random.shuffle(labels)
 
 	num_training_samples = math.ceil(data.shape[0]*0.8) + 1
