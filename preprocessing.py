@@ -1,4 +1,4 @@
-# Preprocessing all.txt for use in algorithms
+# Preprocessing 'all.txt' for use in algorithms
 
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet
@@ -13,11 +13,14 @@ import pdb
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 def gimme():
+	"""Applies All Necesssary Preprocessing of Data and Returns Training, Validation, and Testing Datasets and Labels"""
+	# Load All Reviews and Labels
 	stuff_n_things = np.loadtxt(os.path.join(ROOT, 'all.txt'), delimiter='\t', dtype=str)
 
 	# Separate Data and Labels
 	data = stuff_n_things[:,0].astype(str)
 	labels = stuff_n_things[:,1].astype(int)
+	
 	# Apply String Manipulations
 	data = string_fix(data)
 
@@ -27,15 +30,15 @@ def gimme():
 	# Remove Empty Arrays
 	data = np.delete(data, empty_indices)
 	labels = np.delete(labels, empty_indices)
+	
 	# Calculate TF-IDF Score
 	tfidf_vectorizer = TfidfVectorizer(lowercase=False)
 
 	to_sentence(data)
-
 	data = tfidf_vectorizer.fit_transform(data)
-
 	data = np.asarray(data.todense())
-
+	
+	# Pseudorandomly Shuffle the Data/Labels to Reduce Bias
 	np.random.seed(12)
 	np.random.shuffle(data)
 	np.random.seed(12)
@@ -52,6 +55,7 @@ def gimme():
 	testing_data = data[num_training_samples+num_valtest_samples:data.shape[0], :]
 	testing_labels = labels[num_training_samples+num_valtest_samples:data.shape[0]]
 
+	# Return Split Datasets and Labels
 	return training_data, validation_data, testing_data, training_labels, validation_labels, testing_labels
 
 
