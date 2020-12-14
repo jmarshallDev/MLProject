@@ -25,14 +25,14 @@ def main():
     clf.fit(training_data, training_labels)
 
     # Test the decision tree
-    pred = clf.predict(validation_data)
+    pred = clf.predict(testing_data)
 
     # Compare training and test accuracy
     print("train accuracy =", np.mean(training_labels == clf.predict(training_data)))
-    print("test accuracy =", np.mean(validation_labels == pred))
+    print("test accuracy =", np.mean(testing_labels == pred))
 
     # Show the confusion matrix for test data
-    cm = confusion_matrix(validation_labels, pred)
+    cm = confusion_matrix(testing_labels, pred)
     print("Confusion matrix:")
     print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in cm]))
 
